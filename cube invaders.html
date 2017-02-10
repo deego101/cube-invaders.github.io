@@ -1,0 +1,200 @@
+<html>
+<body>
+  <script
+  src="https://code.jquery.com/jquery-3.1.1.js"
+  integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA="
+  crossorigin="anonymous">
+</script>
+    
+  <canvas id="canvas" width="500px"height="500px"style="background:orange;">
+     
+  </canvas>  
+<p id="score"style="position:absolute;top:25px;color:red;font-size:1.2em;margin-top:0;">score : 20</p>
+<p id="time"style="position:absolute;top:5px;color:red;font-size:1.2em;margin-top:0;">time : 0</p>
+
+</body>
+ 
+    <script>
+        
+        window.onload=function(){
+            
+            
+            //declare variables
+            var canvas=document.getElementById("canvas");
+            var cx=canvas.getContext("2d");
+            var score=20;
+            var time=0;
+            var particles={};
+            var parti=0;
+            var partNum=9;
+            var keys=[];
+            var ishit=false;
+            var check=0; 
+            
+            
+       
+            //creating player object
+            function player(){
+                
+                this.x=canvas.width/2;
+                this.y=canvas.height -20;
+                this.w=30;
+                this.h=10;
+                this.velx=0;
+                this.vely=0;
+                
+                this.update=function(){
+                    document.addEventListener("keydown",function(e){
+                        keys[e.keyCode]=true;
+                    },false);
+                     document.addEventListener("keyup",function(e){
+                        delete keys[e.keyCode];
+                    },false);
+                    
+                    if(keys[39]){this.velx=5;}
+                    else if(keys[37]){this.velx=-5;}
+                    else{this.velx=0;}
+                    
+                    if(keys[38]){this.vely=-5;}
+                    else if(keys[40]){this.vely=5;}
+                    else{this.vely=0;}
+                    
+                    
+                };
+                
+               
+                
+                this.draw=function(){
+                    
+                    cx.fillStyle="blue";
+                    cx.fillRect(this.x,this.y,this.w,this.h);
+                    this.x+=this.velx;
+                    this.y+=this.vely;
+                    if(this.x>=canvas.width){this.x=0};
+                    if(this.x<0){this.x=canvas.width-20};
+                    if(this.y>=canvas.height){this.y=0};
+                    if(this.y<0){this.y=canvas.height-8};
+                    
+                };
+                
+            }
+            
+            //creatin instance for the player obect
+            var p=new player();
+            
+            
+            
+            function Particle(){
+
+                   this.x= Math.random()*canvas.width - 20;
+                   this.y=0;
+                   this.w=15;
+                   this.h=15;
+                   this.velx=0;
+                   this.vely=Math.random()*8 +2;
+                   parti++;
+                   particles[parti]=this;
+                   this.id=parti;
+                   this.life=0;
+                   this.maxLife=300;
+                   
+                       
+                   }
+            
+            
+                
+                  
+
+             //Particle.prototype.cpllision(){ };
+             Particle.prototype.draw=function(){
+                 
+                   this.x+=this.velx;
+                   this.y+=this.vely;
+                   this.life++;
+                 
+                 
+                    if(particles[this.id].x+particles[this.id].w > p.x && particles[this.id].x < p.x+p.w && particles[this.id].y+particles[this.id].h > p.y && particles[this.id].y < p.y+p.h){
+                       
+                        console.log("thank god very much");
+                        check++;
+                        if(check%5==0){
+                            score--;
+                            document.getElementById("score").innerHTML="score :"+" "+score;
+                        }
+                        if(score<=0){
+                            document.getElementById("score").innerHTML="YOU LOSE";
+                        }
+                  }
+                   if(this.life>=this.maxLife){
+                       delete particles[this.id];
+                       
+                   }
+                   cx.fillStyle="black";
+                   cx.fillRect(this.x,this.y,15,15);
+                
+
+            };
+            
+           
+            setInterval(function(){
+          
+                for(var i=0;i<partNum;i++){
+                    new Particle();
+                    
+                }
+             
+                 },1600);
+           
+ 
+            
+            
+            function main(){
+                  for(var i in particles){
+                    particles[i].draw();
+                    
+                      
+                  }
+            
+                 
+                  p.draw();
+                  p.update(); 
+            }
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+                
+            
+            setInterval(function(){
+                 cx.clearRect(0,0,canvas.width,canvas.height);
+                 main();
+             },30);
+            
+            setInterval(function(){
+                time++;
+                document.getElementById("time").innerHTML="time : "+time;
+                
+            },1000);
+            
+       
+        };
+        
+        //important code
+        /*  if(particles[this.id].x+particles[this.id].w > p.x && particles[this.id].x < p.x+p.w && particles[this.id].y+particles[this.id].h > p.y && particles[this.id].y < p.y+p.h){
+                    return true;   
+                    
+                   }*/
+        
+    </script>
+   
+
+</html>
